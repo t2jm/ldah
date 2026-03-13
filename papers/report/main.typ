@@ -11,6 +11,7 @@
 #show heading.where(level: 2): set text(size: 14pt)
 #show heading.where(level: 3): set text(size: 14pt)
 #show figure.where(kind: table): set figure(supplement: "ตารางที่")
+#show math.equation: set text(size: 0.8em)
 
 #set document(
   title: [Lie Detector At Home],
@@ -39,8 +40,8 @@
 ในการประมวลผลสัญญาณระบบได้ประยุกต์ใช้การกรองสัญญาณแบบตัวกรองค่าเฉลี่ยเคลื่อนที่และตัวกรองสัญญาณความถี่ต่ำ
 เพื่อลดสัญญาณรบกวนและสกัดฟีเจอร์สำคัญ เช่นระดับการนำไฟฟ้าของผิวหนังและอัตราการเต้นของหัวใจ
 จากนั้นจึงใช้ตรรกะการตัดสินใจผ่านเกณฑ์เพื่อประเมินสภาวะความเครียด
-ผลการวิเคราะห์จะถูกแสดงผลแบบเรียลไทม์ ผ่านหน้าจอ OLED พร้อมกระพิบ LED ตามจังหวะการเต้นหัวใจ
-จากการทดสอบเบื้องต้นโครงงานนี้ตั้งเป้าหมายพื่อเป็นต้นแบบในการศึกษาด้านการประมวลผลสัญญาณและระบบที่ประยุกต์สำหรับใช้ทางการแพทย์ในอนาคต
+ผลการวิเคราะห์จะถูกแสดงผลแบบเรียลไทม์ ผ่านหน้าจอ OLED พร้อมกระพริบ LED ตามจังหวะการเต้นหัวใจ
+จากการทดสอบเบื้องต้นโครงงานนี้ตั้งเป้าหมายเพื่อเป็นต้นแบบในการศึกษาด้านการประมวลผลสัญญาณและระบบที่ประยุกต์สำหรับใช้ทางการแพทย์ในอนาคต
 
 คำสำคัญ: STM32L432KC, เครื่องจับเท็จ, polygraph, การประมวลผลสัญญาณชีวภาพ, GSR Sensor,
 Digital Heart Rate and Blood Oxygen Sensor, Pulse Heart Rate Sensor
@@ -70,14 +71,14 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
 
   #tab การตรวจสอบความน่าเชื่อถือของบุคคลหรือการประเมินสภาวะความเครียดมีความสำคัญในหลายด้าน
   โดยเฉพาะในการวิจัยทางด้านจิตวิทยา อย่างไรก็ตามเครื่องจับเท็จ (Polygraph)
-  เชิงพาณิชย์มีราคาสูงและมีความซับซ้อนในการใช้งาน
+  @wikipedia-polygraph เชิงพาณิชย์มีราคาสูงและมีความซับซ้อนในการใช้งาน
   และต้องใช้ผู้เชี่ยวชาญหรือเจ้าหน้าที่ที่มีทักษะในการตีความ
   ทำให้ไม่เหมาะกับการเรียนรู้หรือทดลองในระดับนักศึกษา
   การพัฒนาเครื่องตรวจวัดสัญญาณชีวภาพด้วยระบบฝังตัว (Embedded System)
   โดยใช้ไมโครคอนโทรลเลอร์ STM32 และเซนเซอร์ที่หาได้ทั่วไปตามท้องตลาด
   จะช่วยให้นิสิตเข้าใจการอ่านสัญญาณชีวภาพ การประมวลผลสัญญาณ
   และการตัดสินใจเชิงตรรกะในราคาที่จับต้องได้ โดยคงความน่าเชื่อถือในระดับที่เหมาะสม
-  นอกจากนี้มีการประยุกต์ความรู้ด้านอิเล็กทรอนิกส์ (Electronics), การประมวณผลสัญญาณ (Signal
+  นอกจากนี้มีการประยุกต์ความรู้ด้านอิเล็กทรอนิกส์ (Electronics), การประมวลผลสัญญาณ (Signal
   Processing) และการเขียนโปรแกรมระบบฝังตัว (Embedded Programming) เข้าด้วยกัน
   โครงงานนี้จึงน่าสนใจเพราะสามารถต่อยอดสู่ระบบตรวจสุขภาพแบบสวมใส่ได้ (Wearable),
   ระบบติดตามความเครียด (Stress monitoring) หรืออุปกรณ์อินเทอร์เน็ตของสรรพสิ่งด้านการแพทย์
@@ -144,148 +145,158 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
 
   == วิธีแก้ปัญหา
 
-  // FIXME: change curved lines to orthogonal, clean up layout, change node label to thai
   #figure(
     diagram(
-      spacing: (2.75em, 1em),
+      spacing: (0em, 1.75em),
       node-stroke: 1pt,
       node((0, 0), [เริ่มต้น], shape: pill),
-      edge("-|>", (-0.5, 1)),
-      edge("-|>", (0.5, 1)),
+      edge("-|>"),
       node(
-        (-0.5, 1),
-        "Read Max30102",
-        shape: parallelogram,
+        (0, 1),
+        radius: 0.3em,
       ),
-      edge("-|>", (-0.5, 2)),
-      edge("-|>", (-1.5, 2)),
+      edge("r,d", "-|>"),
+      edge("l,d", "-|>"),
+      // Right branch: Max30102 -> IR LED, LED
+      node((1, 2), align(center)[อ่านค่า \ Max30102], shape: parallelogram),
+      edge("d", "-|>"),
+      edge("l,d", "-|>"),
+
+      // Left branch: GSR -> EMA
+      node((-1, 2), align(center)[อ่านค่า GSR], shape: parallelogram),
+      edge("d", "-|>"),
       node(
-        (0.5, 1),
-        "Read GSR",
-        shape: parallelogram,
+        (-1, 3),
+        align(center)[ค่าเฉลี่ย \ เคลื่อนที่ \ แบบเลข \ ชี้กำลัง],
+        shape: rect,
       ),
-      edge("-|>", (0.5, 2)),
+      edge("ddd,r", "-|>", [GSR]),
+
+      // LED -> SpO2
+      node((0, 3), align(center)[อ่านค่า \ LED], shape: parallelogram),
+      edge("d", "-|>"),
+      node((0, 4), align(center)[คำนวณ \ SpO2], shape: rect),
+      edge("dd", "-|>", [SpO2]),
+
+      // IR LED -> IR check -> BPM
+      node((1, 3), align(center)[อ่านค่า \ IR LED], shape: parallelogram),
+      edge("d", "-|>"),
+      node((1, 4), [IR \ v \ $10^5$], shape: diamond),
+      edge("d", "-|>", [Y], label-side: left),
+      edge("r,d", "-|>", [N]),
+      node((2, 5), align(center)[ล้างค่าทั้งหมดเป็น 0]),
+      edge("d,l", "-|>"),
+      node((1, 5), align(center)[คำนวณ BPM]),
+      edge("-|>", [BPM]),
+      node((1, 6), radius: 0.3em),
+      edge("-|>"),
+
+      // Junction merge
+      node((0, 6), radius: 0.3em),
+      edge("d", "-|>"),
+
+      // Decision logic
       node(
-        (0.5, 2),
-        [Exponential \ Moving Average],
+        (0, 7),
+        box(width: 4em)[#set text(size: 0.5em)
+          $A := |"BPM"_"curr" - "BPM"_"prev"| >= 3$
+          \
+          $B := |"GSR"_"curr" - "GSR"_"prev"| >= 5$
+          \
+          $C := "BPM"_"curr" = "BPM"_"prev" = 0$,
+        ],
+        shape: rect,
       ),
-      edge("-|>", (-0.5, 5), bend: 45deg, [GSR]),
-      node(
-        (-1.5, 2),
-        "Read LED",
-        shape: parallelogram,
-      ),
-      edge("-|>", (-1.6, 3)),
-      node(
-        (-0.5, 2),
-        "Read IR LED",
-        shape: parallelogram,
-      ),
-      edge("-|>", (-0.5, 3)),
-      node(
-        (-0.5, 3),
-        "IR > 10,000",
-        shape: diamond,
-      ),
-      edge("-|>", (-0.5, 5), [Reset all to 0], bend: 90deg),
-      edge("-|>", (-0.5, 4), [Y], label-side: left),
-      node(
-        (-1.6, 3),
-        "Calculate SpO2",
-      ),
-      edge("-|>", (-0.5, 5), bend: -45deg, [SpO2]),
-      node(
-        (-0.5, 4),
-        "Calculate BPM",
-      ),
-      edge("-|>", (-0.5, 5), [BPM]),
-      node(
-        (-0.5, 5),
-        radius: 0.5em,
-      ),
-      edge("-|>", (-0.5, 6)),
-      node(
-        (-0.5, 6),
-        [X := diff of curr & prev BPM >= 3 \
-          Y := diff of curr & prev GSR >= 5 \
-          Z := bpm = gsr = 0],
-      ),
-      edge("-|>", (-0.5, 7)),
-      node(
-        (-0.5, 7),
-        "Z",
-        shape: diamond,
-      ),
-      edge("-|>", (-0.5, 10), [Y]),
-      edge("-|>", (0, 8), bend: 30deg, [N]),
-      node(
-        (0, 8),
-        "X",
-        shape: diamond,
-      ),
-      edge("-|>", (0, 9), [Y]),
-      edge("-|>", (0.5, 9), bend: 30deg, [N]),
-      node(
-        (0, 9),
-        "Y",
-        shape: diamond,
-      ),
-      edge("-|>", (0.5, 10), [N], bend: 30deg),
-      edge("-|>", (0, 10), [Y]),
-      edge("-|>", (0, 10), [Y]),
-      node(
-        (0.5, 9),
-        "Y",
-        shape: diamond,
-      ),
-      edge("-|>", (0.5, 10), [Y]),
-      edge("-|>", (1, 10), [N], bend: 30deg),
-      node(
-        (-0.5, 10),
-        "Undefined",
-        shape: parallelogram,
-      ),
-      node(
-        (0, 10),
-        "Lie",
-        shape: parallelogram,
-      ),
-      node(
-        (1, 10),
-        "Truth",
-        shape: parallelogram,
-      ),
-      node(
-        (0.5, 10),
-        "Inconclusive",
-        shape: parallelogram,
-      ),
+      edge("d", "-|>"),
+      node((0, 8), "A", shape: diamond),
+      edge("l,dddd", "-|>", [Y]),
+      edge("d", "-|>", [N]),
+
+      node((0, 9), "B", shape: diamond),
+      edge("dd", "-|>", [Y]),
+      edge("r,d", "-|>", [N]),
+
+      node((0, 11), "C", shape: diamond),
+      edge("d", "-|>", [Y]),
+      edge("r", "-|>", [N]),
+
+      node((1, 10), "C", shape: diamond),
+      edge("d", "-|>", [Y]),
+      edge("r,dd", "-|>", [N]),
+
+      node((1, 11), radius: 0.3em),
+      edge("-|>"),
+      node((1, 12), align(center)[ไม่สามารถ \ สรุปได้], shape: parallelogram),
+
+      // Output nodes
+      node((-1, 12), align(center)[ไม่ระบุ], shape: parallelogram),
+      node((0, 12), align(center)[โกหก], shape: parallelogram),
+      node((2, 12), align(center)[พูดจริง], shape: parallelogram),
     ),
     caption: "กระบวนการทำงานของ STM32L432KC",
     supplement: "แผนภาพที่",
   )
 
-  // FIXME: flowchart ESP32S - evaluate from code repo @ `/home/fdl/Code/._/0/ldah-rx`
   #figure(
     diagram(
+      spacing: (0em, 1.5em),
       node-stroke: 1pt,
       node((0, 0), [เริ่มต้น], shape: pill),
       edge("-|>"),
       node(
         (0, 1),
         align(center)[
-          รับค่ามาจาก \ STM32L432KC
+          เริ่มต้นระบบ \
+          (I2C, OLED, LVGL, UART)
         ],
-        shape: parallelogram,
       ),
       edge("-|>"),
       node(
         (0, 2),
         align(center)[
-          หาค่าการเรียงตัว 1010
+          อ่าน 4 ไบต์ \ จาก UART
         ],
-        shape: rect,
+        shape: parallelogram,
       ),
+      edge("-|>"),
+      node(
+        (0, 3),
+        align(center)[
+          ประกอบค่าเป็น \ จำนวนเต็ม 32 บิต \ (little-endian)
+        ],
+      ),
+      edge("-|>"),
+      node(
+        (0, 4),
+        align(center)[
+          Sync nibble \ = 0xA?
+        ],
+        shape: diamond,
+      ),
+      edge("d", "-|>", [Y], label-side: left),
+      edge("r,u", "-|>", [N], label-side: right),
+      node(
+        (1, 3),
+        align(center)[
+          เลื่อนหน้าต่าง \ ข้อมูล 1 ไบต์
+        ],
+      ),
+      edge("u,l", "-|>"),
+      node(
+        (0, 5),
+        align(center)[
+          แยกค่า HR, SpO2, \ GSR, Pulse, \ Contact, Lie
+        ],
+      ),
+      edge("-|>"),
+      node(
+        (0, 6),
+        align(center)[
+          แสดงผลบน \ หน้าจอ OLED
+        ],
+        shape: parallelogram,
+      ),
+      edge("l,uuuu,r", "-|>"),
     ),
     caption: "กระบวนการทำงานของ ESP32S",
     supplement: "แผนภาพที่",
@@ -302,7 +313,8 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
   ใช้สำหรับการสื่อสารแบบไร้สายและการเชื่อมต่อเครือข่าย เพื่อรองรับการส่งข้อมูลหรือการพัฒนาเป็นระบบ
   Internet of Things, GSR Module เป็นโมดูลเซนเซอร์ตรวจจับกระแสผิวหนัง (Galvanic Skin
   Response) ใช้วัดการเปลี่ยนแปลงของความต้านทานไฟฟ้าของผิวหนังซึ่งสะท้อนถึงระดับความเครียด,
-  MAX30102 โมดูลเซนเซอร์วัดอัตราการเต้นของหัวใจแบบดิจิทัล (Digital Heart Rate)
+  MAX30102 @eepj-max30102 @dasmarmar-max30102
+  โมดูลเซนเซอร์วัดอัตราการเต้นของหัวใจแบบดิจิทัล (Digital Heart Rate)
   และความเข้มข้นของออกซิเจนในเลือด ให้ข้อมูลผ่านการสื่อสาร I2C, หน้าจอ OLED I2C
   เป็นจอแสดงผลขนาดเล็กที่ใช้โปรโตคอล I2C สำหรับแสดงค่าต่างๆ, LED
   เซมิคอนดักเตอร์ไดโอดสำหรับเปล่งแสงเมื่อมีกระแสไหลผ่าน, Resistor
@@ -317,52 +329,60 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
   ภาษาโปรแกรมควบคุมไมโครคอนโทรลเลอร์และประมวลผลสัญญาณ, Visual Studio Code
   โปรแกรมแก้ไขโค้ดที่รองรับหลายภาษา
 
-  == วิธีเพิ่มเติม
+  == โปรโตคอลการสื่อสารระหว่าง STM32L432KC และ ESP32S
 
-  การส่งข้อมูลระหว่างไมโครคอนโทรลเลอร์ STM32L432KC และ ESP32S
-  ซึ่งใช้การหาจังหวะการส่งสัญญาณ... // FIXME: explain alignment 1010 and other protocol explanation, again @ the mentioned repo
+  #tab การส่งข้อมูลระหว่างไมโครคอนโทรลเลอร์ STM32L432KC และ ESP32S ใช้การสื่อสารผ่านพอร์ต
+  UART ที่อัตราบอด 115,200 บิตต่อวินาที โดยข้อมูลจะถูกบรรจุลงในเฟรมขนาด 32 บิต (4 ไบต์) ส่งแบบ
+  little-endian ซึ่งมีโครงสร้างดังแสดงในตารางที่ 1
+
+  #figure(
+    table(
+      columns: 4,
+      table.header[ฟิลด์][ตำแหน่งบิต][ขนาด][คำอธิบาย],
+      [Sync nibble], [\[31:28\]], [4 บิต], [ค่าคงที่ 0xA (1010#sub[2])],
+      [Heart Rate], [\[27:20\]], [8 บิต], [อัตราการเต้นหัวใจ (BPM)],
+      [SpO2], [\[19:13\]], [7 บิต], [ค่าออกซิเจนในเลือด (%)],
+      [GSR], [\[12:4\]], [9 บิต], [ค่าการนำไฟฟ้าผิวหนัง ($mu S$)],
+      [Pulse], [\[3\]], [1 บิต], [สัญญาณชีพจร],
+      [Contact], [\[2\]], [1 บิต], [สถานะการสัมผัสเซนเซอร์],
+      [Lie Eval], [\[1:0\]], [2 บิต], [ผลการประเมิน],
+    ),
+    caption: [โครงสร้างเฟรมข้อมูล 32 บิตสำหรับการสื่อสาร UART],
+  )
+
+  สำหรับฟิลด์ Lie Eval ขนาด 2 บิต มีการกำหนดค่าดังนี้ 00 หมายถึงไม่ระบุ (Undefined), 01
+  หมายถึงโกหก (Lie), 10 หมายถึงพูดจริง (Truth), และ 11 หมายถึงไม่สามารถสรุปได้
+  (Inconclusive)
+
+  การจัดตำแหน่งเฟรม (Frame Synchronization) ใช้หลักการหน้าต่างเลื่อน (Sliding Window)
+  กล่าวคือตัวรับ (ESP32S) จะอ่านข้อมูลทีละ 1 ไบต์เข้าสู่บัฟเฟอร์ขนาด 4 ไบต์
+  เมื่อบัฟเฟอร์เต็มจะทำการประกอบค่าเป็นจำนวนเต็ม 32 บิตแบบ little-endian แล้วตรวจสอบ
+  nibble ที่บิต \[31:28\] หากมีค่าเท่ากับ 0xA (ฐานสอง: 1010)
+  แสดงว่าเฟรมจัดตำแหน่งถูกต้องและสามารถแยกค่าฟิลด์ต่างๆ ได้ หากไม่ตรง
+  ระบบจะเลื่อนหน้าต่างข้อมูลไป 1 ไบต์แล้วอ่านไบต์ใหม่เข้ามาจนกว่าจะพบเฟรมที่ถูกต้อง
+  วิธีนี้ทำให้ระบบสามารถกู้คืนการซิงโครไนซ์ได้โดยอัตโนมัติ แม้ว่าตัวรับจะเริ่มรับข้อมูลกลางเฟรมก็ตาม
+  เมื่อพบเฟรมที่ถูกต้องแล้ว ข้อมูล 4 ไบต์ถัดไปก็จะจัดตำแหน่งถูกต้องโดยอัตโนมัติ
 
   = ผลการทดลอง
-
-  // FIXME: FILL THE - WITH REAL EXPERIMENTAL RESULTS:
-  //
-  // ```csv
-  // Result when not count Maybe,,,,
-  // ,Predicted Lie (1),Predicted Truth (2),Predicted Maybe (3),Total
-  // Actual Lie (0),2,4,5,11
-  // Actual Truth (1),0,16,3,19
-  // Total,2,20,8,30
-  // ,,,,
-  // lie class,,,truth class,
-  // acc,0.600,,acc,0.600
-  // precision,1.000,,precision,0.800
-  // recall,0.182,,recall,0.842
-  // ,,,,
-  // Result when count Maybe,,,,
-  // ,Predicted Lie (1),Predicted Truth (2),Total,
-  // Actual Lie (0),7,4,11,
-  // Actual Truth (1),3,16,19,
-  // Total,10,20,30,
-  // ,,,,
-  // lie class,,,truth class,
-  // acc,0.767,,acc,0.767
-  // precision,0.700,,precision,0.800
-  // recall,0.636,,recall,0.842
-  // ```
 
   == ข้อมูล รูปการใช้งาน และผลที่ได้
 
   #tab
   ข้อมูลที่ใช้เก็บจากการทดลองการจับเท็จของเพื่อนวิศวกรรมคอมพิวเตอร์และให้ทดลองสิ่งที่คิดว่าพูดจริงและพูดเท็จโดยที่ผู้ตรวจอาจรู้ถึงความลับของเพื่อนคนนั้นๆ
-  โดยทำการเก็บข้อมูลมาทั้งหมด - คำถาม และได้จำแนกคำถามที่คิดว่ารู้คำตอบเกี่ยวกับเพื่อนคนนั้น
-  เพื่อหาจำนวนครั้งว่าเครื่องให้คำตอบที่ถูกต้องหรือไม่ และจำนวนครั่งที่เครื่องทายถูก
+  โดยทำการเก็บข้อมูลมาทั้งหมด 30 คำถาม และได้จำแนกคำถามที่คิดว่ารู้คำตอบเกี่ยวกับเพื่อนคนนั้น
+  เพื่อหาจำนวนครั้งว่าเครื่องให้คำตอบที่ถูกต้องหรือไม่ และจำนวนครั้งที่เครื่องทายถูก
+  โดยระบบจะให้ผลลัพธ์เป็น 4 ประเภท ได้แก่ โกหก (Lie), พูดจริง (Truth), ไม่สามารถสรุปได้
+  (Inconclusive) และไม่ระบุ (Undefined) สำหรับการคำนวณเมตริกประสิทธิภาพ
+  ได้นำผลลัพธ์ประเภท Inconclusive มารวมเป็นกลุ่มเดียวกับ Lie
+  เนื่องจากเป็นกรณีที่ตรวจพบสัญญาณความเครียดอย่างน้อยหนึ่งตัวบ่งชี้
 
   #figure(
     table(
-      columns: 2,
-      table.header[ชนิดของคำถาม][จำนวนที่เครื่องตอบถูก],
-      [คำถามจริง], [-],
-      [คำถามเท็จ], [-],
+      columns: 3,
+      table.header[ชนิดของคำถาม][จำนวนทั้งหมด][จำนวนที่เครื่องตอบถูก],
+      [คำถามจริง], [19], [16],
+      [คำถามเท็จ], [11], [7],
+      [รวม], [30], [23],
     ),
     caption: [ตารางเก็บข้อมูลของการทดสอบ],
   )
@@ -374,10 +394,11 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
 
   #figure(
     table(
-      columns: 3,
-      table.header[][ค่าที่ทำนายจริง][ค่าที่ทำนายเท็จ],
-      [ค่าจริงจริง], [-], [-],
-      [ค่าจริงเท็จ], [-], [-],
+      columns: 4,
+      table.header[][ค่าที่ทำนายจริง][ค่าที่ทำนายเท็จ][รวม],
+      [ค่าจริงจริง], [16], [3], [19],
+      [ค่าจริงเท็จ], [4], [7], [11],
+      [รวม], [20], [10], [30],
     ),
     caption: [ตารางความสับสนของข้อมูล],
   )
@@ -391,25 +412,20 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
   ค่าที่จริงเป็นเท็จแต่ค่าที่ทำนายได้จริง (False Positive: FP), ค่าที่จริงได้จริงแต่ค่าที่ทำนายได้เท็จ
   (False Negative: FN), ค่าที่จริงได้เท็จและค่าที่ทำนายได้เท็จ (True Negative: TN)
 
-  #show math.equation: set text(size: 0.8em)
-
   $ "Accuracy" = ("TP"+"TN") / ("TP"+"TN"+"FP"+"FN") $
   $ "Precision" = "TP" / ("TP"+"FP") $
   $ "Recall" = "TP" / ("TP"+"FN") $
 
-  คำนวณจากสมการได้ค่าความถูกต้องเป็น -, ค่าความแม่นยำคือ -, และค่าความไวคือ -
+  จากตารางความสับสน โดยกำหนดให้คลาสโกหก (Lie) เป็นคลาสบวก (Positive) จะได้ TP = 7,
+  TN = 16, FP = 3, FN = 4
+
+  คำนวณจากสมการได้ค่าความถูกต้องเป็น 76.7%, ค่าความแม่นยำคือ 70%, และค่าความไวคือ 63.6%
   ซึ่งในโครงงานนี้ได้เน้นในส่วนของการวัดค่าความไว เพราะเป็นค่าที่เน้นในด้านการจับเท็จ
-  ให้เห็นว่าเครื่องตรวจจับการโกหกขนาดพกพาสามารถทำนายได้ -
+  ให้เห็นว่าเครื่องตรวจจับการโกหกขนาดพกพาสามารถทำนายการโกหกได้ถูกต้อง 63.6% ของทั้งหมด
 
   = สรุปผล
 
-  #tab เครื่องตรวจจับการโกหกขนาดพกพาเป็นเครื่องที่สร้างมาจากเซนเซอร์ที่หาได้ตามท้องตลาด ได้แก่
-  GSR sensor, Max30102 และการใช้ไมโครคอนโทรลเลอร์ STM32L432KC
-  ในการรับข้อมูลเข้าและประมวลผลเป็นหลัก ทำการคำนวณค่าความถูกต้อง ค่าความแม่นยำ และค่าความไว
-  ซึ่งจากการทดลองทำให้ได้ว่าเครื่องตรวจจับการโกหกขนาดพกพามีประสิทธิภาพที่ // FIXME: fill in from experiment results
-  ซึ่งสาเหตุที่เป็นไปได้คือ การใช้เซ็นเซอร์ที่ // FIXME: explain the inaccurate results (BPM too smoothed out - can't detect jumps well, etc)
-
-  // Army start 1
+  #tab
   เครื่องตรวจจับการโกหกขนาดพกพาที่พัฒนาในโครงงานนี้ถูกออกแบบโดยใช้เซนเซอร์ที่สามารถหาได้ทั่วไปในท้องตลาด
   ได้แก่ GSR Sensor สำหรับวัดค่าการนำไฟฟ้าของผิวหนัง และ MAX30102
   สำหรับวัดอัตราการเต้นของหัวใจ โดยใช้ไมโครคอนโทรลเลอร์ STM32L432KC
@@ -418,15 +434,11 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
 
   จากการทดลองกับกลุ่มตัวอย่างจำนวน 30 ครั้ง ระบบสามารถคำนวณค่าประสิทธิภาพของโมเดลได้ดังนี้
 
-  Accuracy (ความถูกต้องโดยรวม) ≈ 76.7%
-
-  Precision (Lie class) ≈ 0.70
-
-  Recall (Lie class) ≈ 0.636
-
-  Precision (Truth class) ≈ 0.80
-
-  Recall (Truth class) ≈ 0.842
+  - Accuracy (ความถูกต้องโดยรวม) $approx 76.7%$
+  - Precision (Lie class) $approx 70%$
+  - Recall (Lie class) $approx 63.6%$
+  - Precision (Truth class) $approx 80%$
+  - Recall (Truth class) $approx 84.2%$
 
   ผลการทดลองแสดงให้เห็นว่าระบบสามารถจำแนกคำตอบที่เป็นความจริงได้ค่อนข้างดี
   แต่ยังมีข้อจำกัดในการตรวจจับการโกหก เนื่องจากสัญญาณทางสรีรวิทยาที่วัดได้สะท้อนถึง
@@ -454,29 +466,21 @@ Digital Heart Rate and Blood Oxygen Sensor, Analog Pulse Heart Rate Sensor
   จึงต้องมีการจัดการเวลาและการส่งข้อมูลให้ตรงกัน ซึ่งในโครงงานนี้ได้แก้ไขโดยใช้วิธีจัดรูปแบบข้อมูลแบบ
   nibble-based synchronization เพื่อให้ข้อมูลจากอุปกรณ์แต่ละตัวสอดคล้องกัน
 
-  โดยสรุป ระบบที่พัฒนาขึ้นสามารถใช้เป็น ต้นแบบ (prototype)
+  การใช้ตัวกรองค่าเฉลี่ยเคลื่อนที่แบบเลขชี้กำลัง (Exponential Moving Average) ในการกรองสัญญาณ
+  BPM ทำให้สัญญาณที่ได้มีความเรียบเกินไป (Over-smoothed) ส่งผลให้การตรวจจับการกระโดดของค่า
+  BPM ทำได้ยาก
+  เนื่องจากการเปลี่ยนแปลงอย่างฉับพลันของอัตราการเต้นของหัวใจจะถูกลดทอนลงจากตัวกรอง
+  ทำให้ค่าผลต่างของ BPM ระหว่างรอบปัจจุบันและรอบก่อนหน้าไม่ถึงเกณฑ์ที่กำหนดไว้ (>= 3 BPM)
+
+  โดยสรุป ระบบที่พัฒนาขึ้นสามารถใช้เป็นต้นแบบ (Prototype)
   สำหรับศึกษาการใช้สัญญาณทางสรีรวิทยาในการประเมินระดับความเครียดของผู้ทดสอบได้
   แต่ยังไม่สามารถใช้เป็นเครื่องตรวจจับการโกหกที่ให้ผลลัพธ์เชิงยืนยันได้อย่างแน่นอน
-  // Army end 1
 
   = กิตติกรรมประกาศ
 
-  #tab ขอขอบคุณเพื่อนๆ วิศวกรรมคอมพิวเตอร์รุ่นที่สามสิบเจ็ด
-  ที่ให้ความร่วมมือในการเก็บข้อมูลของการบันทึกผลการทดสอบ
-
-  //  Army start 2
-  ผู้จัดทำโครงงานขอขอบคุณเพื่อน ๆ นักศึกษาสาขาวิศวกรรมคอมพิวเตอร์ รุ่นที่ 37
+  #tab ผู้จัดทำโครงงานขอขอบคุณเพื่อน ๆ นักศึกษาสาขาวิศวกรรมคอมพิวเตอร์ รุ่นที่ 37
   ที่ให้ความร่วมมือในการเข้าร่วมการทดลองและช่วยเก็บข้อมูลสำหรับการทดสอบระบบ
   ทำให้โครงงานนี้สามารถดำเนินการทดลองและวิเคราะห์ผลได้สำเร็จ
-  // Army end 2
-  = เอกสารอ้างอิง // FIXME: change an actual separate biblography file
 
-  1. eepj, "stm32-max30102," GitHub repository. Available:
-    https://github.com/eepj/stm32-max30102
-
-  2. dasmarmar, "stm32-max30102," GitHub repository. Available:
-    https://github.com/dasmarmar/stm32-max30102
-
-  3. wikipedia, "polygraph" online encyclopedia:
-    https://en.wikipedia.org/wiki/Polygraph
+  #bibliography("refs.bib")
 ]
